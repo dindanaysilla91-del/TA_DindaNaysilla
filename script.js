@@ -1,4 +1,4 @@
-// KONSEP MODUL 1: VARIABEL & TIPE DATA : menyimpan nilai const untuk perhitungan
+// KONSEP MODUL 1: VARIABEL & TIPE DATA 
 const IDEAL = {
     PH_MIN: 5.5,
     PH_MAX: 6.5,
@@ -9,22 +9,21 @@ const IDEAL = {
     SCORE_PER_PARAM: 33.333333333
 };
 
-// KONSEP MODUL VARIABEL & TIPE DATA (Array) : tempat penyimpanan data (Struktur Data) yang akan terus bertambah.
+// KONSEP MODUL VARIABEL & TIPE DATA (Array)
 let historyData = []; 
 
-// KONSEP MODUL FUNCTION & METHOD, PENGKONDISIAN : mendapatkan status umum berdasarkan skor total.
+// KONSEP MODUL FUNCTION & METHOD, PENGKONDISIAN 
 const getSimpleStatus = (score) => {
     if (score >= 85) return 'Optimal! ✨';
     if (score >= 60) return 'Baik, Tetapi Perlu Dicek.';
     return 'Kritis! 🚨 Segera periksa.';
 };
 
-//Menghitung skor dan menentukan status detail setiap parameter. Mengembalikan objek yang berisi total skor dan status detail.
 const calculateDetailedScore = (ph, temp, ppm) => {
     let score = 0;
     const details = {}; 
 
-    // --- SKOR PH ---
+    // SKOR PH 
     if (ph >= IDEAL.PH_MIN && ph <= IDEAL.PH_MAX) {
         score += IDEAL.SCORE_PER_PARAM;
         details.phStatus = 'Optimal';
@@ -35,7 +34,7 @@ const calculateDetailedScore = (ph, temp, ppm) => {
         details.phStatus = 'Kritis';
     }
 
-    // --- SKOR SUHU ---
+    // SKOR SUHU 
     if (temp >= IDEAL.TEMP_MIN && temp <= IDEAL.TEMP_MAX) {
         score += IDEAL.SCORE_PER_PARAM;
         details.tempStatus = 'Optimal';
@@ -46,7 +45,7 @@ const calculateDetailedScore = (ph, temp, ppm) => {
         details.tempStatus = 'Kritis';
     }
 
-    // --- SKOR PPM ---
+    // SKOR PPM 
     if (ppm >= IDEAL.PPM_MIN && ppm <= IDEAL.PPM_MAX) {
         score += IDEAL.SCORE_PER_PARAM;
         details.ppmStatus = 'Optimal';
@@ -95,7 +94,6 @@ const getDetailedRecommendation = (scoreResult) => {
 };
 
 //KONSEP MODUL FUNCTION & METHOD
-//LOGIKA UTAMA: MENAMBAH, MENGHAPUS, DAN MERESET DATA
 const addReading = () => {
     const plantName = document.getElementById('plantName').value.trim();
     const ph = parseFloat(document.getElementById('ph').value);
@@ -159,9 +157,7 @@ const processNext = () => {
         alert(`Sedang mensimulasikan penanganan masalah untuk ${criticalItem.split(':')[0].trim()}. 
         Asumsi: Tindakan korektif sudah dilakukan. Anda harus memasukkan data baru setelah koreksi.`);
        
-// KONSEP: GUI PROGRAMMING (DOM Manipulation)
-        // Dalam implementasi sederhana ini, kita hanya akan mereset tampilan antrian
-        // untuk menunjukkan bahwa item telah "ditangani" secara simulatif.
+// KONSEP: GUI PROGRAMMING
         queueList.innerHTML = '<li style="color:var(--color-muted)">Item utama sudah diproses. Masukkan data baru untuk pembaruan status.</li>';
         document.getElementById('processBtn').style.opacity = '0.5';
         document.getElementById('processBtn').style.cursor = 'default';
@@ -171,7 +167,7 @@ const processNext = () => {
 };
 
 
-//KONSEP: GUI PROGRAMMING (DOM Manipulation): untuk merender tampilan
+//KONSEP: GUI PROGRAMMING 
 const renderHealthCard = (score, statusText, recommendation) => {
     document.getElementById('score').textContent = score;
     document.getElementById('statusText').textContent = statusText;
@@ -187,7 +183,7 @@ const renderTable = () => {
         const r = historyData[i];
         const displayIndex = historyData.length - i; 
 
-//KONSEP: GUI PROGRAMMING (DOM Manipulation - Menambah baris HTML)
+//KONSEP: GUI PROGRAMMING 
         historyBody.innerHTML += `
             <tr>
               <td>${displayIndex}</td>
@@ -205,19 +201,16 @@ const renderTable = () => {
             </tr>
         `;
     }
-    
-    // Panggil fungsi antrian setelah tabel diperbarui
+
     updateMaintenanceQueue();
 };
 
-//merender antrian pemeliharaan
 const renderQueue = (queue) => {
     const queueList = document.getElementById('queueList');
     queueList.innerHTML = '';
     
     if (queue.length === 0) {
         queueList.innerHTML = '<li style="color:var(--color-muted)">Antrian kosong. Semua optimal atau baik.</li>';
-        // Nonaktifkan tombol
         document.getElementById('processBtn').style.opacity = '0.5';
         document.getElementById('processBtn').style.cursor = 'default';
     } else {
@@ -229,45 +222,34 @@ const renderQueue = (queue) => {
                 </li>
             `;
         });
-        // Aktifkan tombol
         document.getElementById('processBtn').style.opacity = '1';
         document.getElementById('processBtn').style.cursor = 'pointer';
     }
 };
 
-// KONSEP: FUNGSI (Method) & STRUKTUR DATA QUEUE (Simulasi Antrian/Prioritas)
+// KONSEP: FUNGSI (Method) & STRUKTUR DATA QUEUE
 const updateMaintenanceQueue = () => {
-    // 1. Ambil hanya data terakhir (terbaru) dari setiap nama tanaman
     const latestReadings = {};
     historyData.forEach(r => {
-        // Data terbaru akan menimpa data lama dengan nama tanaman yang sama
         latestReadings[r.plantName] = r; 
     });
-
-    // 2. Filter yang tidak optimal dan urutkan
     const queue = Object.values(latestReadings)
-        .filter(r => r.score < 85) // Hanya masukkan yang 'Baik, Perlu Dicek' atau 'Kritis'
-        .sort((a, b) => a.score - b.score); // Urutkan dari skor terendah (paling kritis, prioritas tinggi)
+        .filter(r => r.score < 85) 
+        .sort((a, b) => a.score - b.score); 
 
     renderQueue(queue);
 };
 
 
-// 4. EVENT LISTENERS (Menghubungkan tombol dengan fungsi)
+// EVENT LISTENERS
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addBtn').addEventListener('click', addReading);
     
-    // --- Menghubungkan Tombol Reset ---
     document.getElementById('resetBtn').addEventListener('click', resetData);
     document.getElementById('resetBtn').style.opacity = '1'; // Aktifkan Tampilan
     document.getElementById('resetBtn').style.cursor = 'pointer'; // Aktifkan Kursor
     
-    // --- Menghubungkan Tombol Process Next ---
     document.getElementById('processBtn').addEventListener('click', processNext);
-    // Tampilan awal tombol Process Next diatur di renderQueue()
-
-    // Atur tampilan awal
     renderHealthCard('—', 'Belum ada data.', 'Masukkan data untuk melihat saran dan detail diagnostik.');
-    // Set tampilan awal untuk antrian
     renderQueue([]); 
 });
